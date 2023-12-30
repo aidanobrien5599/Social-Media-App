@@ -6,5 +6,6 @@ class Account(db.Model):
     password = db.Column(db.String)
     firstName = db.Column(db.String)
     lastName = db.Column(db.String)
-    age = db.Column(db.String)
+    age = db.Column(db.Integer)
+    email = db.Column(db.String)
     

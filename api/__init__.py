@@ -12,5 +12,8 @@ def create_app():
 
     from .views import main
     app.register_blueprint(main)
+    with app.app_context():
+        db.create_all()
+
 
     return app

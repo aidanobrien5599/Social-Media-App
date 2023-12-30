@@ -11,6 +11,16 @@ def is_valid_email(email):
     if re.match(pattern, email):
         return True
 
+def is_valid_password(username):
+    # Regular expression pattern to validate the username
+    pattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?`\-=[\];\',./]).{8,20}$'  
+    # Use re.match to check if the username matches the pattern
+    if re.match(pattern, username):
+        return True
+    else:
+        return False
+
+
 main = Blueprint('main', __name__)
 
 @main.route('/add_account', methods=['POST'])
@@ -21,43 +31,85 @@ def add_account():
         for field in user_data:
             if not field:
                 return "Missing required field", 400
-        
+        #run if valid email function
         if is_valid_email(user_data['email']) == False:
             return "Invalid email", 400
-            
-            
-            
+        ## make sure it is a valid password
+        if is_valid_password(user_data['password']) == False:
+            return "Invalid Password: Must include 8-20 characters, and at least one number, capital letter, lowercase letter, and special character", 400
         
-        duplicate = Account.query.filterby(username=user_data['username']).first()
+              
+        duplicateUsername = Account.query.filter_by(username=user_data['username']).first()
+        duplicateEmail = Account.query.filter_by(email=user_data['email']).first()
         
-        if not duplicate:
-            new_account = Account(username=user_data['username'],password=user_data['password'],firstName=user_data['firstName'],lastName=user_data['lastName'],email=user_data['email
-            db.session.add(new_movie)
-            db.session.commit()
+        if duplicateUsername:
+            return "Account already exists with this username", 400
         
-    except:
-        print("An exception occurred:", type(error).__name__, "–", error)
+        if duplicateEmail:
+            return "Account already exists with this email", 400
+        #all tests passed email is valid
+        new_account = new_account = Account(
+    username=user_data['username'],
+    password=user_data['password'],
+    firstName=user_data['firstName'],
+    lastName=user_data['lastName'],
+    email=user_data['email'],
+    age=user_data['age'])
+        
+        db.session.add(new_account)
+        db.session.commit()
+        
+        
+    except KeyError as key_error:
+        print("KeyError occurred:", key_error)
         return "", 400
+    except ValueError as value_error:
+        print("ValueError occurred:", value_error)
+        return "", 400
+    except Exception as e:
+        print("An exception occurred:", type(e).__name__, "–", e)
+        return "An error occurred", 400 
     return 'Done', 201
         
-'''
-@main.route('/get_login_info', methods=['GET'])
-def movies():
-    movie_list = Account.query.all()
-    movies = []
+@main.route('/get_account/<string:username>', methods=['GET'])
+def get_account(username):
+    
+    account = Account.query.filter_by(username=username).first()
+    if not account:
+        'Account not found', 404
 
-    for movie in movie_list:
-        movies.append({'title' : movie.title, 'rating' : movie.rating})
+    return jsonify({
+        "username" : account.username, 
+        "password": account.password, 
+        "email" : account.email, 
+        "firstName" : account.firstName, 
+        "lastName": account.lastName,
+        "age": account.age
+        })
+    
+@main.route('/get_all_accounts', methods=['GET'])
+def get_all_accounts():
+    account_list = Account.query.all()
+    accounts = []
+    
+    for account in account_list:
+        accounts.append({
+        "username" : account.username, 
+        "password": account.password, 
+        "email" : account.email, 
+        "firstName" : account.firstName, 
+        "lastName": account.firstName,
+        "age": account.age
+        })
 
-    return jsonify({'movies' : movies})
+    return jsonify({ 'accounts': accounts})
 
-@main.route('/delete_movie/<string:user_name>', methods=['DELETE'])
-def delete_movies(movie_title):
-    movie = Account.query.filter_by(title=movie_title).first()
-    if not movie:
+@main.route('/delete_account/<string:username>', methods=['DELETE'])
+def delete_get_accounts(username):
+    account = Account.query.filter_by(username=username).first()
+    if not account:
         return 'Account not found', 404
     else:
-        db.session.delete(movie)
+        db.session.delete(account)
         db.session.commit()
         return 'Done', 200
-'''
