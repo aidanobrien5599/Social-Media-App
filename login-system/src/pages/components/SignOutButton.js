@@ -3,16 +3,16 @@ import { useHistory } from 'react-router-dom';
 
 
 
-export default function NewAccountButton(props) {
+export default function SignOutButton(props) {
   const history = useHistory();
 
   const handleCreateAccountClick = () => {
+    props.setLoggedInUser(null);
     history.push('/login');
-
   };
 
   
   return (
-   <Button onClick={handleCreateAccountClick}>Back to Sign In</Button>
+   <Button onClick={handleCreateAccountClick}>Sign Out as {props.loggedInUser}</Button>
   );
 }

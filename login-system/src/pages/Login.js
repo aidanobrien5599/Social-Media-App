@@ -4,12 +4,12 @@ import LoginForm from './components/LoginForm.js';
 import NewAccountButton from './components/NewAccountButton.js';
 
 
-function Login() {
+function Login(props) {
   return (
    <Container>
     <Header>Real Social Media Website</Header>
     <Header>Sign In Here</Header>
-    <LoginForm></LoginForm>
+    <LoginForm setLoggedInUser={props.setLoggedInUser}/>
     <NewAccountButton/>
    </Container>
   );

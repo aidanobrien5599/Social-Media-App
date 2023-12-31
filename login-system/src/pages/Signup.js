@@ -4,12 +4,12 @@ import SignupForm from './components/SignupForm.js';
 import BackToLoginButton from './components/BackToLoginButton.js';
 
 
-function Signup() {
+function Signup(props) {
   return (
    <Container>
     <Header>Social Media App</Header>
     <Header>Sign Up Here</Header>
-    <SignupForm></SignupForm>
+    <SignupForm setLoggedInUser={props.setLoggedInUser}></SignupForm>
     <BackToLoginButton/>
    </Container>
   );

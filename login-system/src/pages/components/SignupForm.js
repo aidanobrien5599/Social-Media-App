@@ -2,18 +2,23 @@ import React, {useState, useEffect} from 'react';
 import {Form, Input, Button} from 'semantic-ui-react';
 import axios from 'axios';
 import WarningLabel from './WarningLabel';
+import { useHistory } from 'react-router-dom';
 
 
 
 
 
-export default function SignupForm() {
+export default function SignupForm(props) {
   const[username, setUsername] = useState('')
   const[password, setPassword] = useState('')
   const[age, setAge] = useState('')
   const[email, setEmail] = useState('')
   const[firstName, setFirstName] = useState('')
   const[lastName, setLastName] = useState('')
+
+  const history = useHistory();
+
+  const { setLoggedInUser } = props;  //destructuring props
 
   //whether or not the submission of the form was valid or not
   const[isFormValid, setFormValidity] = useState(false)
@@ -22,7 +27,17 @@ export default function SignupForm() {
 
   //handle the submission of the form
   const submitForm = async() => {
-    try {;
+    try {
+      const resp = await axios.post("/add_account", {
+        username: username,
+        password: password,
+        age: age,
+        email: email,
+        firstName: firstName,
+        lastName: lastName
+      })
+      console.log("added successfully");
+      setFormValidity(true);
     } catch (e) {
         setFormValidity(false);
         console.error(e.message);
@@ -30,8 +45,10 @@ export default function SignupForm() {
 }
 
 useEffect(() =>{
-  if(isFormValid){
+  if(isFormValid){ 
     setWarningVisibility(false);
+    setLoggedInUser(username);
+    history.push('/account')
   } else{
     setWarningVisibility(true);
   }

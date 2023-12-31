@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Form, Input, Button, Label} from 'semantic-ui-react';
+import {Form, Input, Button} from 'semantic-ui-react';
 import axios from 'axios';
 import WarningLabel from './WarningLabel';
 import { useHistory } from 'react-router-dom';
@@ -8,14 +8,18 @@ import { useHistory } from 'react-router-dom';
 
 
 
-export default function LoginForm() {
+export default function LoginFormp(props) {
   const[username, setUsername] = useState('')
   const[password, setPassword] = useState('')
   //whether or not the submission of the form was valid or not
   const[isFormValid, setFormValidity] = useState(false)
   //whether or not we should show the warning message or not
   const[isWarningVisible, setWarningVisibility] = useState(false)
+
   const history = useHistory();
+
+  const { setLoggedInUser } = props; //destructuring props
+  
 
   //handle the submission of the form
   const submitForm = async() => {
@@ -38,6 +42,7 @@ export default function LoginForm() {
 useEffect(() =>{
 if(isFormValid){
   setWarningVisibility(false);
+  setLoggedInUser(username);
   history.push('/account')
 } else{
   setWarningVisibility(true);
