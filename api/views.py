@@ -73,19 +73,22 @@ def add_account():
         
 @main.route('/get_account/<string:username>', methods=['GET'])
 def get_account(username):
-    
-    account = Account.query.filter_by(username=username).first()
-    if not account:
-        'Account not found', 404
+    try:
+        account = Account.query.filter_by(username=username).first()
+        if not account:
+            'Account not found', 404
 
-    return jsonify({
-        "username" : account.username, 
-        "password": account.password, 
-        "email" : account.email, 
-        "firstName" : account.firstName, 
-        "lastName": account.lastName,
-        "age": account.age
-        })
+        return jsonify({
+            "username" : account.username, 
+            "password": account.password, 
+            "email" : account.email, 
+            "firstName" : account.firstName, 
+            "lastName": account.lastName,
+            "age": account.age
+        }) 
+    except Exception as e:
+        return "Bad username", 400
+   
     
 @main.route('/get_all_accounts', methods=['GET'])
 def get_all_accounts():
