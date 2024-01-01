@@ -3,5 +3,5 @@ import React from 'react';
 
 export default function WarningLabel(props){
     console.log(props.isVisible);
-    return props.isVisible && <Label>{props.text}</Label>
+    return props.isVisible && <Label  basic color='red' pointing='up'>{props.text}</Label>
 }

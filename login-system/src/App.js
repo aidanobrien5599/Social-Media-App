@@ -5,6 +5,7 @@ import Account from "./pages/Account.js";
 import Signup from "./pages/Signup.js";
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import React, {useState} from 'react';
+import 'semantic-ui-css/semantic.min.css'
 
 
 function App() {

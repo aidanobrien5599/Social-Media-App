@@ -76,7 +76,7 @@ def get_account(username):
     try:
         account = Account.query.filter_by(username=username).first()
         if not account:
-            'Account not found', 404
+            'Username is not connected to an account', 404
 
         return jsonify({
             "username" : account.username, 
@@ -87,7 +87,7 @@ def get_account(username):
             "age": account.age
         }) 
     except Exception as e:
-        return "Bad username", 400
+        return "Invalid username, please try again", 400
    
     
 @main.route('/get_all_accounts', methods=['GET'])

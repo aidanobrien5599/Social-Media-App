@@ -9,12 +9,12 @@ import { useHistory } from 'react-router-dom';
 
 
 export default function SignupForm(props) {
-  const[username, setUsername] = useState('')
-  const[password, setPassword] = useState('')
-  const[age, setAge] = useState('')
-  const[email, setEmail] = useState('')
-  const[firstName, setFirstName] = useState('')
-  const[lastName, setLastName] = useState('')
+  const[username, setUsername] = useState(null)
+  const[password, setPassword] = useState(null)
+  const[age, setAge] = useState(null)
+  const[email, setEmail] = useState(null)
+  const[firstName, setFirstName] = useState(null)
+  const[lastName, setLastName] = useState(null)
 
   const history = useHistory();
 
@@ -24,9 +24,15 @@ export default function SignupForm(props) {
   const[isFormValid, setFormValidity] = useState(false)
   //whether or not we should show the warning message or not
   const[isWarningVisible, setWarningVisibility] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('');
 
   //handle the submission of the form
   const submitForm = async() => {
+    if(!(username & password && email && age && firstName && lastName)) {
+      setErrorMessage('Please make sure all fields are filled out');
+      setWarningVisibility(true);
+      return;
+    }
     try {
       const resp = await axios.post("/add_account", {
         username: username,
@@ -39,7 +45,13 @@ export default function SignupForm(props) {
       console.log("added successfully");
       setFormValidity(true);
     } catch (e) {
-        setFormValidity(false);
+      if (e.response && e.response.data) {
+        // Set the error message received from the API
+        setErrorMessage(e.response.data);
+      } else {
+        setErrorMessage('An error occurred while processing your request.');
+      }
+        setWarningVisibility(true);
         console.error(e.message);
     }
 }
@@ -49,9 +61,7 @@ useEffect(() =>{
     setWarningVisibility(false);
     setLoggedInUser(username);
     history.push('/account')
-  } else{
-    setWarningVisibility(true);
-  }
+  } 
   }, [isFormValid])
   
   
@@ -63,7 +73,7 @@ useEffect(() =>{
     <Input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
     </Form.Field>
     <Form.Field>
-    <Input placeholder="Password (between 8-20 character, with at least one number, one upper and lower case letter, and one special character" value={password} onChange={(e) => setPassword(e.target.value)}/>
+    <Input placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
     </Form.Field>
     <Form.Field>
     <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
@@ -89,7 +99,7 @@ useEffect(() =>{
       submitForm()
     }}>Submit</Button>
     </Form.Field>
-    <WarningLabel isVisible={isWarningVisible} text="Invalid username or password"/>
+    <WarningLabel isVisible={isWarningVisible} text={errorMessage || 'Invalid field(s)'}/>
    </Form>
   );
 }
