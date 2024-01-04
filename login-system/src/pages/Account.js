@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Header, Container, List, ListItem, Divider } from 'semantic-ui-react';
-import SignOutButton from './components/SignOutButton';
+import SignOutButton from './components/SignOutButton.js';
+import Nav from './components/Nav.js'
+
 
 function Account(props) {
   const [userData, setUserData] = useState(null);
@@ -9,7 +11,7 @@ function Account(props) {
 
   useEffect(() => {
     axios
-      .get('/get_account/' + props.loggedInUser)
+      .get('/get_account/' + props.currentAccount)
       .then((resp) => {
         setUserData(resp.data);
         setLoading(false);
@@ -22,7 +24,7 @@ function Account(props) {
         )
         // Handle error here if needed
       });
-  }, [props.loggedInUser]); // Make sure to add dependencies to the useEffect array
+  }, [props.currentAccount]); // Make sure to add dependencies to the useEffect array
   if(userData === null){
     return<h1>No account found</h1>
   }
@@ -32,6 +34,8 @@ function Account(props) {
 
   // Display user data or component based on the fetched data
   return (
+    <>
+    <Nav setCurrentAccount={props.setCurrentAccount}></Nav>
     <Container
     style={{
       paddingTop: '50px',
@@ -52,7 +56,7 @@ function Account(props) {
           padding: '20px',
           borderRadius: '10px',
         }}>
-      <Header as="h1">Account Bio</Header>
+      <Header as="h1"> {userData.firstName}'s Bio</Header>
       <Divider style={{
             marginBottom: '20px',
             border: 'none',
@@ -78,8 +82,8 @@ function Account(props) {
           </List>
       )}
     </div>
-    <SignOutButton setLoggedInUser={props.setLoggedInUser} loggedInUser={props.loggedInUser}/>
     </Container>
+    </>
   );
 }
 

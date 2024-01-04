@@ -17,7 +17,7 @@ function Signup(props) {
         fontFamily: 'Roboto, sans-serif',
         borderRadius: '10px', // Rounded corners for the container
       }}
-    >
+    > 
       <div style={{ maxWidth: '300px', margin: '0 auto', padding: '20px' }}>
         <Header as="h1" style={{ marginBottom: '40px', color: '#ffffff' }}>
           Social Media App
