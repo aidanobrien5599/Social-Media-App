@@ -116,3 +116,63 @@ def delete_get_accounts(username):
         db.session.delete(account)
         db.session.commit()
         return 'Done', 200
+    
+@main.route('/update_account/<string:username>', methods=['PATCH'])
+def update_account(username):
+    try:
+        account = Account.query.filter_by(username=username).first()
+        if not account:
+            return 'Account not found', 404
+        else:
+            new_data = request.get_json()
+            
+            # Check for valid username
+            if 'username' in new_data and new_data['username'] != username:
+                duplicate_username = Account.query.filter_by(username=new_data['username']).first()
+                if duplicate_username:
+                    return "Account already exists with this username", 400
+            
+            # Check to make sure valid email
+            if 'email' in new_data and new_data['email'] != account.email:
+                duplicate_email = Account.query.filter_by(email=new_data['email']).first()
+                if duplicate_email:
+                    return "Account already exists with this email", 400
+                if not is_valid_email(new_data['email']):
+                    return "Invalid email", 400
+            
+            # Update fields
+            for key, value in new_data.items():
+                if key == 'password':
+                    if not is_valid_password(value):
+                        return "Invalid Password: Must include 8-20 characters, and at least one number, capital letter, lowercase letter, and special character", 400
+                    account.password = value
+                elif key == 'email':
+                    account.email = value
+                elif key == 'username':
+                    account.username = value
+                elif key == 'age':
+                    account.age = value
+                elif key == 'firstName':
+                    account.firstName = value
+                elif key == 'lastName':
+                    account.lastName = value
+                # Add other fields to update as needed
+            
+            # Commit changes to the database
+            db.session.commit()
+    except KeyError as key_error:
+        print("KeyError occurred:", key_error)
+        return "", 400
+    except ValueError as value_error:
+        print("ValueError occurred:", value_error)
+        return "", 400
+    except Exception as e:
+        print("An exception occurred:", type(e).__name__, "–", e)
+        return "An error occurred", 400 
+        
+    return 'Account updated successfully', 200
+        
+                    
+                    
+                
+        
